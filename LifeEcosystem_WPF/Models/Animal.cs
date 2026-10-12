@@ -1,6 +1,6 @@
 ﻿namespace LifeEcosystem_WPF.Models
 {
-    internal class Animal
+    public class Animal
     {
         public int Age { get; set; } = 0;
 
