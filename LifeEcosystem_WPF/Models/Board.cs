@@ -499,6 +499,21 @@ namespace LifeEcosystem_WPF.Models
         }
 
 
+        //funkcja kolekcja do wyświetlania planszy
+        public IEnumerable<Cell> AllCells
+        {
+            get
+            {
+                for(int y=0; y<Height; y++)
+                {
+                    for(int x=0; y<Width; x++)
+                    {
+                        yield return Grid[x, y];
+                    }
+                }
+            }
+        }
+
 
 
 
