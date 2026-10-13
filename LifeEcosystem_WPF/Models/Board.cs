@@ -1,4 +1,6 @@
-﻿namespace LifeEcosystem_WPF.Models
+﻿using System.IO;
+
+namespace LifeEcosystem_WPF.Models
 {
     public class Board
     {
@@ -353,8 +355,148 @@
         }
 
 
+        //zapis do pliku / odczyt z pliku
+        
+        //zapis
+        public void SaveToFile(string filePath)
+        {
+            using StreamWriter writer = new StreamWriter(filePath);
 
+            writer.WriteLine($"Width:{Width}");
+            writer.WriteLine($"Height:{Height}");
+            writer.WriteLine($"R:{string.Join(",", Rules.R)}");
+            writer.WriteLine($"W:{string.Join(",", Rules.W)}");
+            writer.WriteLine($"B:{string.Join(",", Rules.B)}");
+            writer.WriteLine($"P:{string.Join(",", Rules.P)}");
+            writer.WriteLine($"Z:{string.Join(",", Rules.Z)}");
+            writer.WriteLine($"M:{Rules.M}");
+            writer.WriteLine($"L:{Rules.L}");
+            writer.WriteLine("--- --- ---");
 
+            for(int y=0; y<Height; y++)
+            {
+                char[] row = new char[Width];
+                for(int x=0; x<Width; x++)
+                {
+                    Cell cell = Grid[x, y];
+                    if (cell.HasPlant && cell.Animal != null) row[x] = 'B'; //both
+                    else if (cell.HasPlant) row[x] = 'P';                   //plant
+                    else if (cell.Animal != null) row[x] = 'A';             //animal
+                    else row[x] = '-';                                      //puste
+                }
+                writer.WriteLine(new string(row));
+            }
+        }
+
+        //odczyt
+        public static Board LoadFromFile(string filePath)
+        {
+            string[] lines = File.ReadAllLines(filePath);
+            SimulationRules rules = new SimulationRules();
+            int width = 50;
+            int height = 50;
+            int lineIndex = 0;
+
+            while (lineIndex < lines.Length && !lines[lineIndex].StartsWith("---"))
+            {
+                string line = lines[lineIndex].Trim();
+                if (!string.IsNullOrEmpty(line))
+                {
+                    string[] parts = line.Split(':');
+                    if (parts.Length == 2)
+                    {
+                        string key = parts[0].Trim();
+                        string val = parts[1].Trim();
+
+                        switch (key)
+                        {
+                            case "Width":
+                                width = int.Parse(val);
+                                break;
+                            case "Height":
+                                height = int.Parse(val);
+                                break;
+                            case "R":
+                                rules.R = ParseSet(val);
+                                break;
+                            case "W":
+                                rules.W = ParseSet(val);
+                                break;
+                            case "B":
+                                rules.B = ParseSet(val);
+                                break;
+                            case "P":
+                                rules.P = ParseSet(val);
+                                break;
+                            case "Z":
+                                rules.Z = ParseSet(val);
+                                break;
+                            case "M":
+                                rules.M = int.Parse(val);
+                                break;
+                            case "L":
+                                rules.L = int.Parse(val);
+                                break;
+                        }
+                    }
+                }
+                lineIndex++;
+            }
+
+            lineIndex++;
+
+            Board board = new Board(width, height, rules);
+
+            int y = 0;
+            while (lineIndex < lines.Length && y < height)
+            {
+                string row = lines[lineIndex];
+                for (int x = 0; x < Math.Min(row.Length, width); x++)
+                {
+                    char symbol = row[x];
+                    switch (symbol)
+                    {
+                        case 'B': //both
+                            board.Grid[x, y].HasPlant = true;
+                            board.Grid[x, y].Animal = new Animal(0);
+                            break;
+                        case 'P': //roślina
+                            board.Grid[x, y].HasPlant = true;
+                            board.Grid[x, y].Animal = null;
+                            break;
+                        case 'A': //zwierzę
+                            board.Grid[x, y].HasPlant = false;
+                            board.Grid[x, y].Animal = new Animal(0);
+                            break;
+                        default:  //puste
+                            board.Grid[x, y].HasPlant = false;
+                            board.Grid[x, y].Animal = null;
+                            break;
+                    }
+                }
+                y++;
+                lineIndex++;
+            }
+
+            return board;
+        }
+
+        //funkcja pomocnicza zamieniająca 1,2,3 na HashSet<int>
+        private static HashSet<int> ParseSet(string value)
+        {
+            HashSet<int> set = new HashSet<int>();
+            if (string.IsNullOrWhiteSpace(value)) return set;
+
+            string[] elements = value.Split(',');
+            foreach (string el in elements)
+            {
+                if (int.TryParse(el.Trim(), out int num))
+                {
+                    set.Add(num);
+                }
+            }
+            return set;
+        }
 
 
 
