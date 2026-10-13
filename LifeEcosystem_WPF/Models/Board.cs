@@ -506,7 +506,7 @@ namespace LifeEcosystem_WPF.Models
             {
                 for(int y=0; y<Height; y++)
                 {
-                    for(int x=0; y<Width; x++)
+                    for(int x=0; x<Width; x++)
                     {
                         yield return Grid[x, y];
                     }

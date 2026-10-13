@@ -13,11 +13,6 @@ namespace LifeEcosystem_WPF.ViewModels
     public class MainViewModel : ViewModelBase
     {
         private Board board;
-        private DispatcherTimer timer;
-        private bool isRunning;
-        private int intervalMS = 200;
-
-
         public Board Board
         {
             get => board;
@@ -28,7 +23,11 @@ namespace LifeEcosystem_WPF.ViewModels
             }
 
         }
+        private DispatcherTimer timer;
 
+
+
+        private bool isRunning;
         public bool CanEdit => !isRunning;
         public bool IsRunning
         {
@@ -42,7 +41,8 @@ namespace LifeEcosystem_WPF.ViewModels
         }
 
         
-        public int intervalMs
+        private int intervalMs = 200;
+        public int IntervalMs
         {
             get => intervalMs;
             set
@@ -57,6 +57,18 @@ namespace LifeEcosystem_WPF.ViewModels
             }
         }
 
+        private double zoomLevel = 1.0;
+        public double ZoomLevel
+        {
+            get => zoomLevel;
+            set
+            {
+                zoomLevel = value;
+                OnPropertyChanged();
+            }
+        }
+
+        public ICommand ToggleZoomCommand { get; }
 
         //komendy dla przycisków
         public ICommand StartCommand { get; }
@@ -75,8 +87,8 @@ namespace LifeEcosystem_WPF.ViewModels
             timer = new DispatcherTimer();
             timer.Interval = TimeSpan.FromMilliseconds(intervalMs);
             timer.Tick += (s, e) => ExecuteStep();
-
             //przyciski komend
+            ToggleZoomCommand = new RelayCommand(_ => ZoomLevel = ZoomLevel == 1.0 ? 2.5 : 1.0);
             StartCommand = new RelayCommand(_ => Start(), _ => !isRunning);
             StopCommand = new RelayCommand(_ => Stop(), _ => isRunning);
             StepCommand = new RelayCommand(_ => ExecuteStep(), _ => !isRunning);
@@ -143,6 +155,9 @@ namespace LifeEcosystem_WPF.ViewModels
                 Board = Board.LoadFromFile(ofd.FileName);
             }
         }
+
+
+
 
     }
 }

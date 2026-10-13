@@ -1,4 +1,5 @@
 ﻿using LifeEcosystem_WPF.ViewModels;
+using System.Windows.Input;
 
 namespace LifeEcosystem_WPF.Models
 {
@@ -36,6 +37,27 @@ namespace LifeEcosystem_WPF.Models
             this.X = x;
             this.Y = y;
         }
+
+
+        public void TogglePlant()
+        {
+            HasPlant = !HasPlant;   //dodanie/usunięcie zwierzęcia
+        }
+
+        public void ToggleAnimal()
+        {
+            if(Animal == null)
+            {
+                    Animal = new Animal(0); //dodanie zwierzęcia
+            }   
+            else
+            {
+                Animal = null; //usunięcie zwierzęcia
+            }
+        }
+
+
+
 
     }
 }
