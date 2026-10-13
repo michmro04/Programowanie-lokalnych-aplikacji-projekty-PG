@@ -69,6 +69,36 @@
             }
         }
 
+        public bool isInBoard(int x, int y)
+        {
+            return (x >= 0 && x < Width && y >= 0 && y < Height);
+        }
+
+
+        public (int plants, int animals) CountNeighbours(int x, int y)
+        {
+            int plants = 0;
+            int animals = 0;
+
+
+            for (int i = -1; i <= 1; i++)
+            {
+                for (int j = -1; j <= 1; j++)
+                {
+                    if ((i!= 0 || j!=0) && isInBoard(x+i, y+j))
+                    {
+                        if (Grid[x + i, y + j].HasPlant == true)
+                            plants++;
+
+                        if (Grid[x + i, y + j].Animal != null)
+                            animals++;
+                    }
+                }
+            }
+            return (plants,animals);
+        }
+
+
 
 
 
