@@ -1,4 +1,7 @@
-﻿namespace LifeEcosystem_WPF.Models
+﻿using System.Collections.Generic;
+using System.Linq;
+
+namespace LifeEcosystem_WPF.Models
 {
     public class SimulationRules
     {
@@ -11,5 +14,55 @@
         public int M { get; set; } = 1;     //ruch zwierzęcia w kierunku rośliny lub losowo
         public int L { get; set; } = 10;    //długość życia zwierzęcia
 
+
+        //metody do edycji w xamlu
+        public string RText
+        {
+            get => string.Join(",", R);
+            set => R = ParseString(value);
+        }
+
+        public string WText
+        {
+            get => string.Join(",", W);
+            set => W = ParseString(value);
+        }
+
+        public string BText
+        {
+            get => string.Join(",", B);
+            set => B = ParseString(value);
+        }
+
+        public string PText
+        {
+            get => string.Join(",", P);
+            set => P = ParseString(value);
+        }
+
+        public string ZText
+        {
+            get => string.Join(",", Z);
+            set => Z = ParseString(value);
+        }
+
+
+        private HashSet<int> ParseString(string text)
+        {
+            HashSet<int> result = new HashSet<int>();
+            if (string.IsNullOrWhiteSpace(text)) return result;
+
+            string[] parts = text.Split(',');
+            foreach (string part in parts)
+            {
+                if (int.TryParse(part.Trim(), out int number))
+                {
+                    result.Add(number);
+                }
+            }
+            return result;
+
+
+        }
     }
 }

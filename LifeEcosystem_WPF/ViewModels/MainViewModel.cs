@@ -57,6 +57,7 @@ namespace LifeEcosystem_WPF.ViewModels
             }
         }
 
+        public string ZoomButtonText => $"Przełącz Zoom ({ZoomLevel}x)";
         private double zoomLevel = 1.0;
         public double ZoomLevel
         {
@@ -65,8 +66,11 @@ namespace LifeEcosystem_WPF.ViewModels
             {
                 zoomLevel = value;
                 OnPropertyChanged();
+                OnPropertyChanged(nameof(ZoomButtonText));
             }
         }
+
+
 
         public ICommand ToggleZoomCommand { get; }
 
@@ -102,13 +106,13 @@ namespace LifeEcosystem_WPF.ViewModels
         private void Start()
         {
             timer.Start();
-            isRunning = true;
+            IsRunning = true;
         }
 
         private void Stop()
         {
             timer.Stop();
-            isRunning = false;
+            IsRunning = false;
         }
 
         private void ExecuteStep()

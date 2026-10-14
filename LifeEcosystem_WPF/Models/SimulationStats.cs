@@ -1,6 +1,8 @@
-﻿namespace LifeEcosystem_WPF.Models
+﻿using LifeEcosystem_WPF.ViewModels;
+
+namespace LifeEcosystem_WPF.Models
 {
-    public class SimulationStats
+    public class SimulationStats : ViewModelBase
     {
         public int TotalPlants { get; set; }
         public int PlantBirths { get; set; }
@@ -10,5 +12,10 @@
         public int AnimalDeaths{ get; set; }
 
 
+
+        public void Refresh()
+        {
+            OnPropertyChanged(string.Empty);
+        }
     }
 }

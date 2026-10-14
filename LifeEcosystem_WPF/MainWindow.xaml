@@ -1,12 +1,153 @@
 ﻿<Window x:Class="LifeEcosystem_WPF.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:LifeEcosystem_WPF"
-        mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
-    <Grid>
+        Title="Ekosystem - Symulacja Życia (WPF)" Height="800" Width="1100"
+        WindowStartupLocation="CenterScreen">
 
+    <Window.Resources>
+        <Style x:Key="SidebarButtonStyle" TargetType="Button">
+            <Setter Property="Margin" Value="0,4,0,4"/>
+            <Setter Property="Padding" Value="8,6"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+        </Style>
+
+        <!--pojedyncza komórka siatki -->
+        <DataTemplate x:Key="CellTemplate">
+            <Border BorderBrush="#E0E0E0" BorderThickness="0.5" Width="12" Height="12"
+                    MouseLeftButtonDown="Cell_MouseLeftButtonDown"
+                    MouseRightButtonDown="Cell_MouseRightButtonDown">
+                <!--ROŚLINA-->
+                <Border.Style>
+                    <Style TargetType="Border">
+                        <Setter Property="Background" Value="#F8F9FA"/>
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding HasPlant}" Value="True">
+                                <Setter Property="Background" Value="#4CAF50"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Border.Style>
+
+                <!--ZWIERZĘ-->
+                <Ellipse Width="8" Height="8" HorizontalAlignment="Center" VerticalAlignment="Center">
+                    <Ellipse.Style>
+                        <Style TargetType="Ellipse">
+                            <Setter Property="Visibility" Value="Collapsed"/>
+                            <Setter Property="Fill" Value="#E53935"/>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding HasAnimal}" Value="True">
+                                    <Setter Property="Visibility" Value="Visible"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Ellipse.Style>
+                </Ellipse>
+            </Border>
+        </DataTemplate>
+    </Window.Resources>
+
+    <Grid Background="#ECEFF1">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="280"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <!--PANEL BOCZNY-->
+        <Border Grid.Column="0" Background="#FFFFFF" BorderBrush="#CFD8DC" BorderThickness="0,0,1,0">
+            <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                <!-- Dodatkowy Border przejmuje Padding, ponieważ StackPanel go nie obsługuje -->
+                <Border Padding="15">
+                    <StackPanel>
+                        <TextBlock Text="Sterowanie Symulacją" FontSize="18" FontWeight="Bold" Margin="0,0,0,10" Foreground="#263238"/>
+
+                        <Button Content="Start" Command="{Binding StartCommand}" Style="{StaticResource SidebarButtonStyle}" Background="#E8F5E9"/>
+                        <Button Content="Stop" Command="{Binding StopCommand}" Style="{StaticResource SidebarButtonStyle}" Background="#FFEBEE"/>
+                        <Button Content="Pojedynczy krok" Command="{Binding StepCommand}" Style="{StaticResource SidebarButtonStyle}"/>
+                        <Button Content="Losuj stan" Command="{Binding RandomizeCommand}" Style="{StaticResource SidebarButtonStyle}"/>
+                        <Button Content="Wyczyść planszę" Command="{Binding ClearCommand}" Style="{StaticResource SidebarButtonStyle}"/>
+
+                        <!--zoom-->
+                        <Button Content="{Binding ZoomButtonText}" 
+                            Command="{Binding ToggleZoomCommand}" 
+                            Style="{StaticResource SidebarButtonStyle}" Background="#E1F5FE"/>
+                        
+                        <Separator Margin="0,10"/>
+
+                        <!--prędkość-->
+                        <TextBlock Text="{Binding IntervalMs, StringFormat='Prędkość (opóźnienie): {0} ms'}" FontWeight="SemiBold"/>
+                        <Slider Minimum="20" Maximum="1000" Value="{Binding IntervalMs}" SmallChange="10" LargeChange="50" Margin="0,5,0,10"/>
+
+                        <Separator Margin="0,10"/>
+
+                        <!--zapis i odczyt-->
+                        <TextBlock Text="Plik" FontSize="14" FontWeight="Bold" Margin="0,0,0,5"/>
+                        <Button Content="Zapisz do pliku" Command="{Binding SaveCommand}" Style="{StaticResource SidebarButtonStyle}"/>
+                        <Button Content="Wczytaj z pliku" Command="{Binding LoadCommand}" Style="{StaticResource SidebarButtonStyle}"/>
+
+                        <Separator Margin="0,10"/>
+
+                        <!--statystyki-->
+                        <TextBlock Text="Statystyki bieżące" FontSize="15" FontWeight="Bold" Margin="0,0,0,8" Foreground="#263238"/>
+                        <StackPanel Background="#F5F5F5" Margin="0,0,0,10">
+                            <TextBlock Text="{Binding Board.Stats.TotalPlants, StringFormat='Rośliny (żywe): {0}'}" Margin="6,2" Foreground="#2E7D32" FontWeight="SemiBold"/>
+                            <TextBlock Text="{Binding Board.Stats.TotalAnimals, StringFormat='Zwierzęta (żywe): {0}'}" Margin="6,2" Foreground="#C62828" FontWeight="SemiBold"/>
+                            <Separator Margin="4,2"/>
+                            <TextBlock Text="{Binding Board.Stats.PlantBirths, StringFormat='Narodziny roślin: {0}'}" Margin="6,2"/>
+                            <TextBlock Text="{Binding Board.Stats.PlantsDeaths, StringFormat='Śmierć roślin: {0}'}" Margin="6,2"/>
+                            <TextBlock Text="{Binding Board.Stats.AnimalBirths, StringFormat='Narodziny zwierząt: {0}'}" Margin="6,2"/>
+                            <TextBlock Text="{Binding Board.Stats.AnimalDeaths, StringFormat='Śmierć zwierząt: {0}'}" Margin="6,2"/>
+                        </StackPanel>
+
+                        <Separator Margin="0,10"/>
+
+                        <!--reguły symulacji-->
+                        <TextBlock Text="Reguły symulacji" FontSize="14" FontWeight="Bold" Margin="0,0,0,5"/>
+                        <StackPanel IsEnabled="{Binding CanEdit}">
+                            <TextBlock Text="R (narodziny roślin - sąsiedzi):" FontSize="11"/>
+                            <TextBox Text="{Binding Board.Rules.RText, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,4"/>
+
+                            <TextBlock Text="W (wegetacja roślin - sąsiedzi):" FontSize="11"/>
+                            <TextBox Text="{Binding Board.Rules.WText, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,4"/>
+
+                            <TextBlock Text="B (narodziny zwierząt - sąsiedzi):" FontSize="11"/>
+                            <TextBox Text="{Binding Board.Rules.BText, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,4"/>
+
+                            <TextBlock Text="P (rośliny na polu przy narodzinach):" FontSize="11"/>
+                            <TextBox Text="{Binding Board.Rules.PText, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,4"/>
+
+                            <TextBlock Text="Z (przeżycie zwierząt - sąsiedzi):" FontSize="11"/>
+                            <TextBox Text="{Binding Board.Rules.ZText, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,4"/>
+
+                            <TextBlock Text="M (zasięg szukania rośliny):" FontSize="11"/>
+                            <TextBox Text="{Binding Board.Rules.M, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,4"/>
+
+                            <TextBlock Text="L (długość życia zwierzęcia):" FontSize="11"/>
+                            <TextBox Text="{Binding Board.Rules.L, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,4"/>
+                        </StackPanel>
+
+                        <TextBlock Text="Wskazówka: w trybie pauzy kliknij LPM na pole, by dodać roślinę, lub PPM, by dodać zwierzę." 
+                                   TextWrapping="Wrap" FontSize="11" Foreground="#78909C" Margin="0,10,0,0"/>
+                    </StackPanel>
+                </Border>
+            </ScrollViewer>
+        </Border>
+        <!--PLANSZA-->
+        <ScrollViewer Grid.Column="1" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" Background="#37474F">
+            <Border Background="#263238" Padding="3" CornerRadius="4" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="20">
+                <!--Siatka planszy-->
+                <ItemsControl ItemsSource="{Binding Board.AllCells}" ItemTemplate="{StaticResource CellTemplate}">
+                    <ItemsControl.LayoutTransform>
+                        <!--zoom-->
+                        <ScaleTransform ScaleX="{Binding ZoomLevel}" ScaleY="{Binding ZoomLevel}"/>
+                    </ItemsControl.LayoutTransform>
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <UniformGrid Rows="{Binding Board.Height}" Columns="{Binding Board.Width}"/>
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                </ItemsControl>
+            </Border>
+        </ScrollViewer>
     </Grid>
 </Window>

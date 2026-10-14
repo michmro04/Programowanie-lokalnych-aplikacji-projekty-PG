@@ -25,7 +25,7 @@ namespace LifeEcosystem_WPF
         }
 
         //lewym przyciskiem myszki dodajemy/usuwamy ROŚLINĘ
-        public void Call_MouseLeftButton(object sender, MouseButton a)
+        public void Cell_MouseLeftButtonDown(object sender, MouseButtonEventArgs a)
         {
             if(viewModel.CanEdit &&sender is FrameworkElement element && element.DataContext is Cell cell)
             {
@@ -34,18 +34,13 @@ namespace LifeEcosystem_WPF
         }
 
         //prawym przyciskiem myszki dodajemy/usuwamy ZWIERZĘ
-        public void Call_MouseRightButton(object sender, MouseButton a)
+        public void Cell_MouseRightButtonDown(object sender, MouseButtonEventArgs a)
         {
             if (viewModel.CanEdit && sender is FrameworkElement element && element.DataContext is Cell cell)
             {
                 cell.ToggleAnimal();
             }
         }
-
-
-
-
-
 
     }
 }

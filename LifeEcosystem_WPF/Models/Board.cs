@@ -38,6 +38,7 @@ namespace LifeEcosystem_WPF.Models
                     Grid[x,y].Animal=null;
                 }
             }
+            RecalculateTotals();
         }
 
         public void Randomize(double plantProbability, double animalProbability)
@@ -70,6 +71,7 @@ namespace LifeEcosystem_WPF.Models
 
                 }
             }
+            RecalculateTotals();
         }
 
         public bool IsInBoard(int x, int y)
@@ -288,26 +290,27 @@ namespace LifeEcosystem_WPF.Models
             Animal?[,] finalAnimals = new Animal?[Width, Height];
 
             //śmierć
-            for(int i=0; i<Width; i++)
+            for (int i = 0; i < Width; i++)
             {
-                for(int j=0; j<Height; j++)
+                for (int j = 0; j < Height; j++)
                 {
-                    if (nextAnimals[i, j] != null)
+                    Animal? currAnimal = nextAnimals[i, j];
+                    if (currAnimal != null)
                     {
-                        nextAnimals[i, j].AgeOneYear();
+                        currAnimal.AgeOneYear();
 
-                        //śmierć zwierzęcia po prekroczeniu wieku L
-                        if (nextAnimals[i,j].Age >= Rules.L)
+                        // śmierć zwierzęcia po przekroczeniu wieku L
+                        if (currAnimal.Age >= Rules.L)
                         {
                             nextAnimals[i, j] = null;
                             Stats.AnimalDeaths++;
                         }
                         else
                         {
-                            int animalNeighbours = CountAnimalNeighboursInArray(nextAnimals,i, j);
+                            int animalNeighbours = CountAnimalNeighboursInArray(nextAnimals, i, j);
                             if (Rules.Z.Contains(animalNeighbours))
                             {
-                                finalAnimals[i, j] = nextAnimals[i, j];
+                                finalAnimals[i, j] = currAnimal;
                             }
                             else
                             {
@@ -320,7 +323,7 @@ namespace LifeEcosystem_WPF.Models
             }
 
             //narodziny
-            for(int i = 0; i<Width; i++)
+            for (int i = 0; i<Width; i++)
             {
                 for(int j = 0; j<Height; j++)
                 {
@@ -352,6 +355,7 @@ namespace LifeEcosystem_WPF.Models
                     if (Grid[i, j].Animal != null) Stats.TotalAnimals++;
                }
             }
+            Stats.Refresh();    //odświeżenie statystyk
         }
 
 
@@ -478,6 +482,7 @@ namespace LifeEcosystem_WPF.Models
                 lineIndex++;
             }
 
+            board.RecalculateTotals();
             return board;
         }
 
@@ -498,6 +503,25 @@ namespace LifeEcosystem_WPF.Models
             return set;
         }
 
+        public void RecalculateTotals()
+        {
+            Stats.TotalPlants = 0;
+            Stats.TotalAnimals = 0;
+            Stats.PlantBirths = 0;
+            Stats.PlantsDeaths = 0;
+            Stats.AnimalBirths = 0;
+            Stats.AnimalDeaths = 0;
+
+            for (int x = 0; x < Width; x++)
+            {
+                for (int y = 0; y < Height; y++)
+                {
+                    if (Grid[x, y].HasPlant) Stats.TotalPlants++;
+                    if (Grid[x, y].Animal != null) Stats.TotalAnimals++;
+                }
+            }
+            Stats.Refresh();
+        }
 
         //funkcja kolekcja do wyświetlania planszy
         public IEnumerable<Cell> AllCells

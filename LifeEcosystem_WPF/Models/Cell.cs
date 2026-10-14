@@ -27,6 +27,7 @@ namespace LifeEcosystem_WPF.Models
                 animal = value;
                 OnPropertyChanged();
                 OnPropertyChanged(nameof(IsEmpty));
+                OnPropertyChanged(nameof(HasAnimal));
             }
 
         }
