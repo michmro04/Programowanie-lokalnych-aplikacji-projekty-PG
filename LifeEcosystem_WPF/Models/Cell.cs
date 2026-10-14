@@ -30,6 +30,7 @@ namespace LifeEcosystem_WPF.Models
             }
 
         }
+        public bool HasAnimal => Animal != null;
         public bool IsEmpty => !HasPlant && Animal is null;
 
         public Cell(int x, int y)
