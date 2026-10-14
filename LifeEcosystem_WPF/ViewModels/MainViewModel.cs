@@ -102,10 +102,12 @@ namespace LifeEcosystem_WPF.ViewModels
             LoadCommand = new RelayCommand(_ => LoadFromFile(), _ => !isRunning);
         }
 
-
+        private bool startFlag = false;
         private void Start()
         {
             timer.Start();
+            Randomize();
+            startFlag = true;
             IsRunning = true;
         }
 
@@ -124,13 +126,17 @@ namespace LifeEcosystem_WPF.ViewModels
         private void Clear()
         {
             board.Clear();
+            startFlag = false;
             OnPropertyChanged(nameof(Board));
         }
 
         private void Randomize()
         {
-            board.Randomize(0.1, 0.2);
-            OnPropertyChanged(nameof(Board));
+            if (startFlag == false)
+            {
+                board.Randomize(0.1, 0.2);
+                OnPropertyChanged(nameof(Board));
+            }
         }
 
         private void SaveToFile()
