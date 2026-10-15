@@ -4,6 +4,8 @@ namespace LifeEcosystem_WPF.Models
 {
     public class SimulationStats : ViewModelBase
     {
+
+        public int Steps { get; set; } = 0;
         public int TotalPlants { get; set; }
         public int PlantBirths { get; set; }
         public int PlantsDeaths { get; set; }

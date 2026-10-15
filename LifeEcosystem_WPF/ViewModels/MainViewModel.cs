@@ -1,10 +1,5 @@
 ﻿using LifeEcosystem_WPF.Models;
 using Microsoft.Win32;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Input;
 using System.Windows.Threading;
 
@@ -105,10 +100,13 @@ namespace LifeEcosystem_WPF.ViewModels
         private bool startFlag = false;
         private void Start()
         {
-            timer.Start();
-            Randomize();
-            startFlag = true;
-            IsRunning = true;
+            if(board.Stats.TotalPlants==0 && board.Stats.TotalAnimals==0)
+            {
+                board.Randomize(0.1, 0.2);
+                OnPropertyChanged(nameof(Board));
+            }
+                timer.Start();
+                IsRunning = true;
         }
 
         private void Stop()
@@ -126,17 +124,13 @@ namespace LifeEcosystem_WPF.ViewModels
         private void Clear()
         {
             board.Clear();
-            startFlag = false;
             OnPropertyChanged(nameof(Board));
         }
 
         private void Randomize()
         {
-            if (startFlag == false)
-            {
-                board.Randomize(0.1, 0.2);
-                OnPropertyChanged(nameof(Board));
-            }
+            board.Randomize(0.1, 0.2);
+            OnPropertyChanged(nameof(Board));
         }
 
         private void SaveToFile()

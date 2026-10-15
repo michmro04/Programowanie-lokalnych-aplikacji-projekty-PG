@@ -90,6 +90,7 @@
                         <!--statystyki-->
                         <TextBlock Text="Statystyki bieżące" FontSize="15" FontWeight="Bold" Margin="0,0,0,8" Foreground="#263238"/>
                         <StackPanel Background="#F5F5F5" Margin="0,0,0,10">
+                            <TextBlock Text="{Binding Board.Stats.Steps, StringFormat='Krok: {0}'}" Margin="6,2" Foreground="#263238" FontWeight="Bold"/>
                             <TextBlock Text="{Binding Board.Stats.TotalPlants, StringFormat='Rośliny (żywe): {0}'}" Margin="6,2" Foreground="#2E7D32" FontWeight="SemiBold"/>
                             <TextBlock Text="{Binding Board.Stats.TotalAnimals, StringFormat='Zwierzęta (żywe): {0}'}" Margin="6,2" Foreground="#C62828" FontWeight="SemiBold"/>
                             <Separator Margin="4,2"/>

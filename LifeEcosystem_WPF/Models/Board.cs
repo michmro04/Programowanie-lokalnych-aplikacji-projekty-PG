@@ -38,6 +38,11 @@ namespace LifeEcosystem_WPF.Models
                     Grid[x,y].Animal=null;
                 }
             }
+            Stats.Steps = 0;
+            Stats.PlantBirths = 0;
+            Stats.PlantsDeaths = 0;
+            Stats.AnimalBirths = 0;
+            Stats.AnimalDeaths = 0;
             RecalculateTotals();
         }
 
@@ -71,6 +76,11 @@ namespace LifeEcosystem_WPF.Models
 
                 }
             }
+            Stats.Steps = 0;
+            Stats.PlantBirths = 0;
+            Stats.PlantsDeaths = 0;
+            Stats.AnimalBirths = 0;
+            Stats.AnimalDeaths = 0;
             RecalculateTotals();
         }
 
@@ -207,6 +217,7 @@ namespace LifeEcosystem_WPF.Models
         {
             Random rand = new Random();
             //reset statystyk total, bo liczymy je od nowa
+            Stats.Steps++;
             Stats.TotalAnimals = 0;
             Stats.AnimalBirths = 0;
             Stats.AnimalDeaths = 0;
@@ -368,6 +379,7 @@ namespace LifeEcosystem_WPF.Models
 
             writer.WriteLine($"Width:{Width}");
             writer.WriteLine($"Height:{Height}");
+            writer.WriteLine($"Steps:{Stats.Steps}");
             writer.WriteLine($"R:{string.Join(",", Rules.R)}");
             writer.WriteLine($"W:{string.Join(",", Rules.W)}");
             writer.WriteLine($"B:{string.Join(",", Rules.B)}");
@@ -399,6 +411,7 @@ namespace LifeEcosystem_WPF.Models
             SimulationRules rules = new SimulationRules();
             int width = 50;
             int height = 50;
+            int steps = 0;
             int lineIndex = 0;
 
             while (lineIndex < lines.Length && !lines[lineIndex].StartsWith("---"))
@@ -419,6 +432,9 @@ namespace LifeEcosystem_WPF.Models
                                 break;
                             case "Height":
                                 height = int.Parse(val);
+                                break;
+                            case "Steps":
+                                steps = int.Parse(val);
                                 break;
                             case "R":
                                 rules.R = ParseSet(val);
@@ -481,7 +497,7 @@ namespace LifeEcosystem_WPF.Models
                 y++;
                 lineIndex++;
             }
-
+            board.Stats.Steps = steps;
             board.RecalculateTotals();
             return board;
         }
@@ -507,11 +523,7 @@ namespace LifeEcosystem_WPF.Models
         {
             Stats.TotalPlants = 0;
             Stats.TotalAnimals = 0;
-            Stats.PlantBirths = 0;
-            Stats.PlantsDeaths = 0;
-            Stats.AnimalBirths = 0;
-            Stats.AnimalDeaths = 0;
-
+            
             for (int x = 0; x < Width; x++)
             {
                 for (int y = 0; y < Height; y++)
