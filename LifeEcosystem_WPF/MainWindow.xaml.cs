@@ -12,7 +12,18 @@ namespace LifeEcosystem_WPF
         public MainWindow()
         {
             InitializeComponent();
-            viewModel = new MainViewModel();
+
+            BoardSizeWindow sizeDialog = new BoardSizeWindow();
+            if(sizeDialog.ShowDialog() == true)
+            {
+                viewModel = new MainViewModel(sizeDialog.BoardWidth, sizeDialog.BoardHeight);
+            }
+            else
+            {
+                viewModel = new MainViewModel(50, 50);
+
+            }
+
             DataContext = viewModel;
         }
 

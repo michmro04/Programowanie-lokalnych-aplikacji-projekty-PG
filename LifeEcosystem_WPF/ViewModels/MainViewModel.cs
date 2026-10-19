@@ -114,10 +114,10 @@ namespace LifeEcosystem_WPF.ViewModels
         public ICommand LoadCommand { get; }
 
 
-        public MainViewModel()
+        public MainViewModel(int width = 50, int height = 50)
         {
 
-            board = new Board(50, 50);
+            board = new Board(width, height);
             timer = new DispatcherTimer();
             timer.Interval = TimeSpan.FromMilliseconds(intervalMs);
             timer.Tick += (s, e) => ExecuteStep();
