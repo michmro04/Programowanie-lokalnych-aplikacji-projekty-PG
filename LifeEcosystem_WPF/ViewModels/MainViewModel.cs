@@ -154,19 +154,16 @@ namespace LifeEcosystem_WPF.ViewModels
         private void ExecuteStep()
         {
             board.Step();
-            OnPropertyChanged(nameof(Board));
         } 
 
         private void Clear()
         {
             board.Clear();
-            OnPropertyChanged(nameof(Board));
         }
 
         private void Randomize()
         {
             board.Randomize(0.1, 0.2);
-            OnPropertyChanged(nameof(Board));
         }
 
         private void SaveToFile()

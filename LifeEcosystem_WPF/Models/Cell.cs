@@ -13,6 +13,7 @@ namespace LifeEcosystem_WPF.Models
             get => hasPlant;
             set
             {
+                if(hasPlant == value) return;   //odświeżanie tylko przy zmianie 
                 hasPlant = value;
                 OnPropertyChanged();
                 OnPropertyChanged(nameof(IsEmpty));
@@ -24,6 +25,7 @@ namespace LifeEcosystem_WPF.Models
             get => animal;
             set
             {
+                if (animal == value) return;    //odświeżanie tylko przy zmianie 
                 animal = value;
                 OnPropertyChanged();
                 OnPropertyChanged(nameof(IsEmpty));
