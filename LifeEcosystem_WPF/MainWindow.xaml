@@ -12,29 +12,28 @@
             <Setter Property="FontWeight" Value="SemiBold"/>
         </Style>
 
-        <!--pojedyncza komórka siatki -->
-        <DataTemplate x:Key="CellTemplate">
+        <!--rysowanie zwierzęcia-->
+        <!--1. kółko-->
+        <DataTemplate x:Key="CircleCellTemplate">
             <Border BorderBrush="#E0E0E0" BorderThickness="0.5" Width="12" Height="12"
                     MouseLeftButtonDown="Cell_MouseLeftButtonDown"
                     MouseRightButtonDown="Cell_MouseRightButtonDown">
-                <!--ROŚLINA-->
                 <Border.Style>
                     <Style TargetType="Border">
                         <Setter Property="Background" Value="#F8F9FA"/>
                         <Style.Triggers>
                             <DataTrigger Binding="{Binding HasPlant}" Value="True">
-                                <Setter Property="Background" Value="#4CAF50"/>
+                                <Setter Property="Background" Value="{Binding DataContext.PlantColor, RelativeSource={RelativeSource AncestorType=Window}}"/>
                             </DataTrigger>
                         </Style.Triggers>
                     </Style>
                 </Border.Style>
 
-                <!--ZWIERZĘ-->
-                <Ellipse Width="8" Height="8" HorizontalAlignment="Center" VerticalAlignment="Center">
+                <Ellipse Width="8" Height="8" HorizontalAlignment="Center" VerticalAlignment="Center"
+                         Fill="{Binding DataContext.AnimalColor, RelativeSource={RelativeSource AncestorType=Window}}">
                     <Ellipse.Style>
                         <Style TargetType="Ellipse">
                             <Setter Property="Visibility" Value="Collapsed"/>
-                            <Setter Property="Fill" Value="#E53935"/>
                             <Style.Triggers>
                                 <DataTrigger Binding="{Binding HasAnimal}" Value="True">
                                     <Setter Property="Visibility" Value="Visible"/>
@@ -45,8 +44,73 @@
                 </Ellipse>
             </Border>
         </DataTemplate>
-    </Window.Resources>
 
+        <!--2: kwadrat-->
+        <DataTemplate x:Key="SquareCellTemplate">
+            <Border BorderBrush="#E0E0E0" BorderThickness="0.5" Width="12" Height="12"
+                    MouseLeftButtonDown="Cell_MouseLeftButtonDown"
+                    MouseRightButtonDown="Cell_MouseRightButtonDown">
+                <Border.Style>
+                    <Style TargetType="Border">
+                        <Setter Property="Background" Value="#F8F9FA"/>
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding HasPlant}" Value="True">
+                                <Setter Property="Background" Value="{Binding DataContext.PlantColor, RelativeSource={RelativeSource AncestorType=Window}}"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Border.Style>
+
+                <Rectangle Width="7" Height="7" HorizontalAlignment="Center" VerticalAlignment="Center"
+                           Fill="{Binding DataContext.AnimalColor, RelativeSource={RelativeSource AncestorType=Window}}">
+                    <Rectangle.Style>
+                        <Style TargetType="Rectangle">
+                            <Setter Property="Visibility" Value="Collapsed"/>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding HasAnimal}" Value="True">
+                                    <Setter Property="Visibility" Value="Visible"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Rectangle.Style>
+                </Rectangle>
+            </Border>
+        </DataTemplate>
+
+        <!--3: ikonka-->
+        <DataTemplate x:Key="IconCellTemplate">
+            <Border BorderBrush="#E0E0E0" BorderThickness="0.5" Width="12" Height="12"
+                    MouseLeftButtonDown="Cell_MouseLeftButtonDown"
+                    MouseRightButtonDown="Cell_MouseRightButtonDown">
+                <Border.Style>
+                    <Style TargetType="Border">
+                        <Setter Property="Background" Value="#F8F9FA"/>
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding HasPlant}" Value="True">
+                                <Setter Property="Background" Value="{Binding DataContext.PlantColor, RelativeSource={RelativeSource AncestorType=Window}}"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Border.Style>
+
+                <Viewbox Stretch="Uniform" Margin="1">
+                    <TextBlock Text="🐾" Foreground="{Binding DataContext.AnimalColor, RelativeSource={RelativeSource AncestorType=Window}}" FontWeight="Bold">
+                        <TextBlock.Style>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="Visibility" Value="Collapsed"/>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding HasAnimal}" Value="True">
+                                        <Setter Property="Visibility" Value="Visible"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TextBlock.Style>
+                    </TextBlock>
+                </Viewbox>
+            </Border>
+        </DataTemplate>
+    </Window.Resources>
+    
     <Grid Background="#ECEFF1">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="280"/>
@@ -56,7 +120,6 @@
         <!--PANEL BOCZNY-->
         <Border Grid.Column="0" Background="#FFFFFF" BorderBrush="#CFD8DC" BorderThickness="0,0,1,0">
             <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
-                <!-- Dodatkowy Border przejmuje Padding, ponieważ StackPanel go nie obsługuje -->
                 <Border Padding="15">
                     <StackPanel>
                         <TextBlock Text="Sterowanie Symulacją" FontSize="18" FontWeight="Bold" Margin="0,0,0,10" Foreground="#263238"/>
@@ -67,14 +130,52 @@
                         <Button Content="Losuj stan" Command="{Binding RandomizeCommand}" Style="{StaticResource SidebarButtonStyle}"/>
                         <Button Content="Wyczyść planszę" Command="{Binding ClearCommand}" Style="{StaticResource SidebarButtonStyle}"/>
 
-                        <!--zoom-->
-                        <Button Content="{Binding ZoomButtonText}" 
-                            Command="{Binding ToggleZoomCommand}" 
-                            Style="{StaticResource SidebarButtonStyle}" Background="#E1F5FE"/>
-                        
                         <Separator Margin="0,10"/>
 
-                        <!--prędkość-->
+                        <!--zoom wielopoziomowy i płynny-->
+                        <TextBlock Text="{Binding ZoomButtonText}" FontWeight="SemiBold" Margin="0,0,0,4"/>
+                        <Grid Margin="0,0,0,5">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="35"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="35"/>
+                            </Grid.ColumnDefinitions>
+                            <Button Grid.Column="0" Content="-" Command="{Binding ZoomOutCommand}" FontWeight="Bold"/>
+                            <Slider Grid.Column="1" Minimum="0.5" Maximum="3.5" Value="{Binding ZoomLevel}" TickFrequency="0.1" Margin="8,0" VerticalAlignment="Center"/>
+                            <Button Grid.Column="2" Content="+" Command="{Binding ZoomInCommand}" FontWeight="Bold"/>
+                        </Grid>
+
+                        <Separator Margin="0,10"/>
+
+                        <!--sekcja wyglądu organizmów-->
+                        <TextBlock Text="Wygląd (Prezentacja)" FontSize="14" FontWeight="Bold" Margin="0,0,0,5"/>
+
+                        <TextBlock Text="Kolor roślin:" FontSize="11"/>
+                        <ComboBox SelectedValue="{Binding PlantColor}" SelectedValuePath="Tag" Margin="0,2,0,6">
+                            <ComboBoxItem Content="Zielony" Tag="#4CAF50"/>
+                            <ComboBoxItem Content="Ciemny leśny" Tag="#1B5E20"/>
+                            <ComboBoxItem Content="Limonkowy" Tag="#9CCC65"/>
+                            <ComboBoxItem Content="Turkusowy" Tag="#00ACC1"/>
+                        </ComboBox>
+
+                        <TextBlock Text="Kolor zwierząt:" FontSize="11"/>
+                        <ComboBox SelectedValue="{Binding AnimalColor}" SelectedValuePath="Tag" Margin="0,2,0,6">
+                            <ComboBoxItem Content="Czerwony" Tag="#E53935"/>
+                            <ComboBoxItem Content="Niebieski" Tag="#1E88E5"/>
+                            <ComboBoxItem Content="Pomarańczowy" Tag="#FB8C00"/>
+                            <ComboBoxItem Content="Fioletowy" Tag="#8E24AA"/>
+                        </ComboBox>
+
+                        <TextBlock Text="Kształt zwierząt:" FontSize="11"/>
+                        <ComboBox SelectedValue="{Binding DisplayStyle}" SelectedValuePath="Tag" Margin="0,2,0,4">
+                            <ComboBoxItem Content="Kółko" Tag="Kółko"/>
+                            <ComboBoxItem Content="Kwadrat" Tag="Kwadrat"/>
+                            <ComboBoxItem Content="Ikona 🐾" Tag="Ikona"/>
+                        </ComboBox>
+
+                        <Separator Margin="0,10"/>
+
+                        <!--prędkość kroku-->
                         <TextBlock Text="{Binding IntervalMs, StringFormat='Prędkość (opóźnienie): {0} ms'}" FontWeight="SemiBold"/>
                         <Slider Minimum="20" Maximum="1000" Value="{Binding IntervalMs}" SmallChange="10" LargeChange="50" Margin="0,5,0,10"/>
 
@@ -137,7 +238,20 @@
         <ScrollViewer Grid.Column="1" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" Background="#37474F">
             <Border Background="#263238" Padding="3" CornerRadius="4" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="20">
                 <!--Siatka planszy-->
-                <ItemsControl ItemsSource="{Binding Board.AllCells}" ItemTemplate="{StaticResource CellTemplate}">
+                <ItemsControl ItemsSource="{Binding Board.AllCells}">
+                    <ItemsControl.Style>
+                        <Style TargetType="ItemsControl">
+                            <Setter Property="ItemTemplate" Value="{StaticResource CircleCellTemplate}"/>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding DisplayStyle}" Value="Kwadrat">
+                                    <Setter Property="ItemTemplate" Value="{StaticResource SquareCellTemplate}"/>
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding DisplayStyle}" Value="Ikona">
+                                    <Setter Property="ItemTemplate" Value="{StaticResource IconCellTemplate}"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </ItemsControl.Style>
                     <ItemsControl.LayoutTransform>
                         <!--zoom-->
                         <ScaleTransform ScaleX="{Binding ZoomLevel}" ScaleY="{Binding ZoomLevel}"/>

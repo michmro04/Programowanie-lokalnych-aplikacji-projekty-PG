@@ -52,24 +52,59 @@ namespace LifeEcosystem_WPF.ViewModels
             }
         }
 
-        public string ZoomButtonText => $"Przełącz Zoom ({ZoomLevel}x)";
+        public string ZoomButtonText => $"Przełącz Zoom ({ZoomLevel:0.0}x)";
         private double zoomLevel = 1.0;
         public double ZoomLevel
         {
             get => zoomLevel;
             set
             {
-                zoomLevel = value;
+                zoomLevel = Math.Round(Math.Clamp(value,0.5,4.0),2);
                 OnPropertyChanged();
                 OnPropertyChanged(nameof(ZoomButtonText));
             }
         }
 
 
+        private string plantColor = "#4CAF50";
+        public string PlantColor
+        {
+            get => plantColor;
+            set
+            {
+                plantColor = value;
+                OnPropertyChanged();
+            }
+        }
 
-        public ICommand ToggleZoomCommand { get; }
+
+        private string animalColor = "#E53935";
+        public string AnimalColor
+        {
+            get => animalColor;
+            set
+            {
+                animalColor = value;
+                OnPropertyChanged();
+            }
+        }
+
+        private string displayStyle = "Kółko";
+        public string DisplayStyle
+        {
+            get => displayStyle;
+            set
+            {
+                displayStyle = value;
+                OnPropertyChanged();
+            }
+        }
 
         //komendy dla przycisków
+        public ICommand ZoomInCommand { get; }
+        public ICommand ZoomOutCommand { get; }
+
+
         public ICommand StartCommand { get; }
         public ICommand StopCommand { get; }
         public ICommand StepCommand { get; }
@@ -87,7 +122,8 @@ namespace LifeEcosystem_WPF.ViewModels
             timer.Interval = TimeSpan.FromMilliseconds(intervalMs);
             timer.Tick += (s, e) => ExecuteStep();
             //przyciski komend
-            ToggleZoomCommand = new RelayCommand(_ => ZoomLevel = ZoomLevel == 1.0 ? 2.5 : 1.0);
+            ZoomInCommand = new RelayCommand(_ => ZoomLevel += 0.5);
+            ZoomOutCommand = new RelayCommand(_ => ZoomLevel -= 0.5);
             StartCommand = new RelayCommand(_ => Start(), _ => !isRunning);
             StopCommand = new RelayCommand(_ => Stop(), _ => isRunning);
             StepCommand = new RelayCommand(_ => ExecuteStep(), _ => !isRunning);
