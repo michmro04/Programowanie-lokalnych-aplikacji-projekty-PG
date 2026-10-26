@@ -7,9 +7,35 @@
     <Window.Resources>
         <Style x:Key="SidebarButtonStyle" TargetType="Button">
             <Setter Property="Margin" Value="0,4,0,4"/>
-            <Setter Property="Padding" Value="8,6"/>
+            <Setter Property="Height" Value="34"/>
             <Setter Property="FontSize" Value="13"/>
             <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="RenderTransformOrigin" Value="0.5,0.5"/>
+            <Setter Property="RenderTransform">
+                <Setter.Value>
+                    <ScaleTransform ScaleX="1.0" ScaleY="1.0"/>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <EventTrigger RoutedEvent="MouseEnter">
+                    <BeginStoryboard>
+                        <Storyboard>
+                            <DoubleAnimation Storyboard.TargetProperty="FontSize" To="15" Duration="0:0:0.15"/>
+                            <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)" To="1.04" Duration="0:0:0.15"/>
+                            <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)" To="1.04" Duration="0:0:0.15"/>
+                        </Storyboard>
+                    </BeginStoryboard>
+                </EventTrigger>
+                <EventTrigger RoutedEvent="MouseLeave">
+                    <BeginStoryboard>
+                        <Storyboard>
+                            <DoubleAnimation Storyboard.TargetProperty="FontSize" To="13" Duration="0:0:0.15"/>
+                            <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleX)" To="1.0" Duration="0:0:0.15"/>
+                            <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)" To="1.0" Duration="0:0:0.15"/>
+                        </Storyboard>
+                    </BeginStoryboard>
+                </EventTrigger>
+            </Style.Triggers>
         </Style>
 
         <!--rysowanie zwierzęcia-->
@@ -221,7 +247,7 @@
                             <TextBlock Text="Z (przeżycie zwierząt - sąsiedzi):" FontSize="11"/>
                             <TextBox Text="{Binding Board.Rules.ZText, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,4"/>
 
-                            <TextBlock Text="M (zasięg szukania rośliny):" FontSize="11"/>
+                            <TextBlock Text="M (krok zwierzęcia):" FontSize="11"/>
                             <TextBox Text="{Binding Board.Rules.M, UpdateSourceTrigger=PropertyChanged}" Margin="0,0,0,4"/>
 
                             <TextBlock Text="L (długość życia zwierzęcia):" FontSize="11"/>

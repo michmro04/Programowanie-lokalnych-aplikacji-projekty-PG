@@ -9,7 +9,7 @@ namespace LifeEcosystem_WPF
         public int BoardHeight { get; private set; } = 50;
 
         private const int MinSize = 20;
-        private const int MaxSize = 100;
+        private const int MaxSize = 120;
 
         public BoardSizeWindow()
         {

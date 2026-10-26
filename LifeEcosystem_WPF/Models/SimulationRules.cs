@@ -11,7 +11,7 @@ namespace LifeEcosystem_WPF.Models
         public HashSet<int> P { get; set; } = new() { 0, 1 };   //liczba roślin na danym polu przy narodzinach zwierzęcia
         public HashSet<int> Z { get; set; } = new() { 0, 1, 2, 3 };     //zwierze przeżywa gdy sąsiedztwo zwierząt wynosi 0-3
 
-        public int M { get; set; } = 1;     //ruch zwierzęcia w kierunku rośliny lub losowo
+        public int M { get; set; } = 2;     //długośc krokuzwierzęcia w kierunku rośliny lub losowo
         public int L { get; set; } = 10;    //długość życia zwierzęcia
 
 
