@@ -200,8 +200,6 @@ namespace LifeEcosystem_WPF.Models
                         {
                             currentX = nextX;
                             currentY = nextY;
-
-                            if (Grid[currentX, currentY].HasPlant) break;
                         }
                         else
                         {
